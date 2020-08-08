@@ -13,7 +13,7 @@
 }
 
 %token <valor> NUM
-%token EOL SQRT MOD
+%token EOL SQRT
 %token SEN COS TAN ASEN ACOS ATAN LOG10 LOG
 
 %left '-' '+'
@@ -29,6 +29,7 @@ stm_lst: stm EOL
 ;
 
 stm: exp {printf("Resultado = %.2f\n", $1);}
+   | error_syntax
 ;
 
 exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
@@ -41,10 +42,11 @@ exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
                                     $$ = $1 / $3;
                                 }else{
                                     $$ = -1;
-                                    yyerror("No existe division entre cero\n");
+                                    yyerrok;
+                                    yyerror("No existe division entre cero");
                                 }
                             }
-        |exp MOD exp        { $$ = fmod($1, $3); }      /* Modulo de un numero */
+        |exp '%' exp        { $$ = fmod($1, $3); }      /* Modulo de un numero */
         |exp '^' exp        { $$ = pow($1, $3); }       /* Potencia */
         |SQRT exp           { $$ = sqrt($2); }          /* Raiz cuadrada */
         |SEN exp            { $$ = sin($2); }           /* Funcion seno */
@@ -59,13 +61,54 @@ exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
         |'(' exp ')'        { $$ = $2; }                /* Reconocimiento agrupaciones por '()' */
 ;
 
+/* Reconocimiento de posibles errores */
+error_syntax: '-'               { yyerrok; yyerror("No se reconoció la operación -> '-'"); }
+            | '+'               { yyerrok; yyerror("No se reconoció la operación -> '+'"); }
+            | '*'               { yyerrok; yyerror("No se reconoció la operación -> '*'"); }
+            | '/'               { yyerrok; yyerror("No se reconoció la operación -> '/'"); }
+            | exp '-'           { yyerrok; yyerror("Debe ingresar al menos 1 número después de -> '-'"); }  
+            | exp '+'           { yyerrok; yyerror("Debe ingresar al menos 1 número después de -> '+'"); }
+            | exp '*'           { yyerrok; yyerror("Debe ingresar al menos 1 número después de -> '*'"); }
+            | exp '/'           { yyerrok; yyerror("Debe ingresar al menos 1 número después de -> '/'"); }
+            | '%' error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | SQRT error_sep    { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | SEN error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | COS error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | TAN error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | ASEN error_sep    { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | ACOS error_sep    { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | ATAN error_sep    { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | LOG10 error_sep   { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | LOG error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
+            | '%'               { yyerrok; yyerror("Sintaxis -> 'value' % 'value'"); }
+            | SQRT              { yyerrok; yyerror("Sintaxis -> sqrt('value')"); }
+            | SEN               { yyerrok; yyerror("Sintaxis -> sen('value')"); }
+            | COS               { yyerrok; yyerror("Sintaxis -> os('value')"); }
+            | TAN               { yyerrok; yyerror("Sintaxis -> tan('value')"); }
+            | ASEN              { yyerrok; yyerror("Sintaxis -> asen('value')"); }
+            | ACOS              { yyerrok; yyerror("Sintaxis -> acos('value')"); }
+            | ATAN              { yyerrok; yyerror("Sintaxis -> atan('value')"); }
+            | LOG10             { yyerrok; yyerror("Sintaxis -> log10('value')"); }
+            | LOG               { yyerrok; yyerror("Sintaxis -> log('value')"); }
+;
+
+error_sep: '('
+         | ')'
+         | '(' ')'
+         | '|'
+         | '|' '|'
+;
+
 %%
 
 void yyerror(char *s){
     printf("ERROR: %s \n", s);
+    printf("----------------------------------------------------------------------------\n");
 }
 
 int main(int args, char **argv){
+    yydebug = 0;
+    printf("\t\t\t\tCALCULADORA\n");
     yyparse();
     return 0;
 }

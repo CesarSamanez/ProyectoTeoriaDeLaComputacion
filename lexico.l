@@ -8,7 +8,6 @@ numero              [0-9]+("."[0-9]+)?
 
 {numero}            { yylval.valor=atof(yytext); return(NUM); }
 " "                 ;
-"%"                 { return(MOD); }
 "sqrt"              { return(SQRT); }
 "sen"               { return(SEN); }
 "cos"               { return(COS); }
