@@ -8,11 +8,13 @@ numero              [0-9]+("."[0-9]+)?
 
 {numero}            { yylval.valor=atof(yytext); return(NUM); }
 " "                 ;
-"sqrt"              { return(SQRT); }
+"raiz"              { return(SQRT); }
 "sen"               { return(SEN); }
 "cos"               { return(COS); }
 "tan"               { return(TAN); }
-"log10"             { return(LOG10); }
+"ctg"               { return(COTAN); }
+"sec"               { return(SEC); }
+"csc"               { return(COSEC); }
 "log"               { return(LOG); }
 "asin"              { return(ASEN); }
 "acos"              { return(ACOS); }

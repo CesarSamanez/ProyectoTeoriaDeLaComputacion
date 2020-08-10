@@ -3,8 +3,10 @@
     #include <stdlib.h>
     #include <math.h>
     #define YYDEBUG 1
+    #define PI 3.14159265
     extern int yylex(void);
     extern char *yytext;
+    extern FILE *yyin;
     void yyerror(char*);
 %}
 
@@ -14,7 +16,7 @@
 
 %token <valor> NUM
 %token EOL SQRT
-%token SEN COS TAN ASEN ACOS ATAN LOG10 LOG
+%token SEN COS TAN COTAN SEC COSEC ASEN ACOS ATAN LOG
 
 %left '-' '+'
 %left '*' '/' 
@@ -29,74 +31,51 @@ stm_lst: stm EOL
 ;
 
 stm: exp {printf("Resultado = %.2f\n", $1);}
-   | error_syntax
 ;
 
 exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
         |'-' NUM            { $$ = -1 * $2; }           /* Numero negativo */
         |exp '+' exp        { $$ = $1 + $3; }           /* Suma */
         |exp '-' exp        { $$ = $1 - $3; }           /* Resta */
-        |exp '*' exp        { $$ = $1 * $3; }           /* Division */
-        |exp '/' exp        {
+        |exp '*' exp        { $$ = $1 * $3; }           /* Multiplicación */
+        |exp '/' exp        {   
                                 if($3 != 0){            /* Verificacion errores division por 0 */
                                     $$ = $1 / $3;
                                 }else{
                                     $$ = -1;
                                     yyerrok;
-                                    yyerror("No existe division entre cero");
+                                    yyerror("No existe división entre cero");
                                 }
-                            }
+                            }                           /* División */
         |exp '%' exp        { $$ = fmod($1, $3); }      /* Modulo de un numero */
         |exp '^' exp        { $$ = pow($1, $3); }       /* Potencia */
-        |SQRT exp           { $$ = sqrt($2); }          /* Raiz cuadrada */
-        |SEN exp            { $$ = sin($2); }           /* Funcion seno */
-        |COS exp            { $$ = cos($2); }           /* Funcion coseno */
-        |TAN exp            { $$ = tan($2); }           /* Funcion tangente */
-        |ASEN exp           { $$ = asin($2); }          /* Funcion arco_seno */
-        |ACOS exp           { $$ = acos($2); }          /* Funcion arco_coseno */
-        |ATAN exp           { $$ = atan($2); }          /* Funcion arco_tangente */
-        |LOG10 exp          { $$ = log10($2); }         /* Logaritmo base 10 */
-        |LOG exp            { $$ = log($2); }           /* Logaritmo */
+        |SQRT '(' exp ')'   { 
+                              if($3 < 0){
+                                  $$ = -1;
+                                  yyerrok;
+                                  yyerror("Raiz de número negativo");
+                              }else{
+                                  $$ = sqrt($3);
+                              } 
+                            }                           /* Raiz cuadrada */
+        |SEN '(' exp ')'    { $$ = sin($3 / 180 * PI); }           /* Funcion seno */
+        |COS '(' exp ')'    { $$ = cos($3 / 180 * PI); }           /* Funcion coseno */
+        |TAN '(' exp ')'    { $$ = tan($3 / 180 * PI); }           /* Funcion tangente */
+        |COSEC '(' exp ')'  { $$ = 1/sin($3 / 180 * PI); }         /* Funcion cosecante */
+        |SEC '(' exp ')'    { $$ = 1/cos($3 / 180 * PI); }         /* Funcion secante */
+        |COTAN '(' exp ')'  { $$ = 1/tan($3 / 180 * PI); }         /* Funcion cotangente */
+        |ASEN '(' exp ')'   { $$ = asin($3 / 180 * PI); }          /* Funcion arco_seno */
+        |ACOS '(' exp ')'   { $$ = acos($3 / 180 * PI); }          /* Funcion arco_coseno */
+        |ATAN '(' exp ')'   { $$ = atan($3 / 180 * PI); }          /* Funcion arco_tangente */
+        |LOG '(' exp ')'    { $$ = log10($3); }         /* Logaritmo base 10 */
         |'|' exp '|'        { $$ = abs($2); }           /* Valor absoluto */
         |'(' exp ')'        { $$ = $2; }                /* Reconocimiento agrupaciones por '()' */
-;
-
-/* Reconocimiento de posibles errores */
-error_syntax: '-'               { yyerrok; yyerror("No se reconoció la operación -> '-'"); }
-            | '+'               { yyerrok; yyerror("No se reconoció la operación -> '+'"); }
-            | '*'               { yyerrok; yyerror("No se reconoció la operación -> '*'"); }
-            | '/'               { yyerrok; yyerror("No se reconoció la operación -> '/'"); }
-            | exp '-'           { yyerrok; yyerror("Debe ingresar al menos 1 número después de -> '-'"); }  
-            | exp '+'           { yyerrok; yyerror("Debe ingresar al menos 1 número después de -> '+'"); }
-            | exp '*'           { yyerrok; yyerror("Debe ingresar al menos 1 número después de -> '*'"); }
-            | exp '/'           { yyerrok; yyerror("Debe ingresar al menos 1 número después de -> '/'"); }
-            | '%' error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | SQRT error_sep    { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | SEN error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | COS error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | TAN error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | ASEN error_sep    { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | ACOS error_sep    { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | ATAN error_sep    { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | LOG10 error_sep   { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | LOG error_sep     { yyerrok; yyerror("Separadores '(' y/o ')'"); }
-            | '%'               { yyerrok; yyerror("Sintaxis -> 'value' % 'value'"); }
-            | SQRT              { yyerrok; yyerror("Sintaxis -> sqrt('value')"); }
-            | SEN               { yyerrok; yyerror("Sintaxis -> sen('value')"); }
-            | COS               { yyerrok; yyerror("Sintaxis -> os('value')"); }
-            | TAN               { yyerrok; yyerror("Sintaxis -> tan('value')"); }
-            | ASEN              { yyerrok; yyerror("Sintaxis -> asen('value')"); }
-            | ACOS              { yyerrok; yyerror("Sintaxis -> acos('value')"); }
-            | ATAN              { yyerrok; yyerror("Sintaxis -> atan('value')"); }
-            | LOG10             { yyerrok; yyerror("Sintaxis -> log10('value')"); }
-            | LOG               { yyerrok; yyerror("Sintaxis -> log('value')"); }
-;
-
-error_sep: '('
-         | ')'
-         | '(' ')'
-         | '|'
-         | '|' '|'
+        |exp '+'            { $$ = $1; yyerrok; }           
+        |exp '-'            { $$ = $1; yyerrok; }           
+        |exp '*'            { $$ = $1; yyerrok; }           
+        |exp '/'            { $$ = $1; yyerrok; }                           
+        |exp '%'            { $$ = $1; yyerrok; }      
+        |exp '^'            { $$ = $1; yyerrok; }       
 ;
 
 %%
@@ -108,7 +87,13 @@ void yyerror(char *s){
 
 int main(int args, char **argv){
     yydebug = 0;
-    printf("\t\t\t\tCALCULADORA\n");
+    printf("---------------------------- CALCULADORA -----------------------------------\n");
+
+    if(args>1)
+        yyin=fopen(argv[1], "rt");
+    else
+        yyin=fopen("operaciones.txt","rt");
+    
     yyparse();
     return 0;
 }

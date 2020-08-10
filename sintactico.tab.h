@@ -55,11 +55,13 @@ extern int yydebug;
     SEN = 261,
     COS = 262,
     TAN = 263,
-    ASEN = 264,
-    ACOS = 265,
-    ATAN = 266,
-    LOG10 = 267,
-    LOG = 268
+    COTAN = 264,
+    SEC = 265,
+    COSEC = 266,
+    ASEN = 267,
+    ACOS = 268,
+    ATAN = 269,
+    LOG = 270
   };
 #endif
 
@@ -67,11 +69,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "sintactico.y"
+#line 13 "sintactico.y"
 
     double valor;
 
-#line 75 "sintactico.tab.h"
+#line 77 "sintactico.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
