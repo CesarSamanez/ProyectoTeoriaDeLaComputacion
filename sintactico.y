@@ -47,8 +47,22 @@ exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
                                     yyerror("No existe división entre cero");
                                 }
                             }                           /* División */
-        |exp '%' exp        { $$ = fmod($1, $3); }      /* Modulo de un numero */
-        |exp '^' exp        { $$ = pow($1, $3); }       /* Potencia */
+        |exp '%' exp        { 
+                                if($3 <= 0){
+                                    $$ = -1;
+                                    yyerrok;
+                                    yyerror("El valor debe ser mayor a 0");
+                                }else{
+                                    $$ = fmod($1, $3);
+                                } 
+                            }      /* Modulo de un numero */
+        |exp '^' exp        { 
+                                if($3 == 0){
+                                    $$ = 1;
+                                }else{
+                                    $$ = pow($1, $3);
+                                }
+                            }       /* Potencia */
         |SQRT '(' exp ')'   { 
                               if($3 < 0){
                                   $$ = -1;
@@ -57,7 +71,7 @@ exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
                               }else{
                                   $$ = sqrt($3);
                               } 
-                            }                           /* Raiz cuadrada */
+                            }                                      /* Raiz cuadrada */
         |SEN '(' exp ')'    { $$ = sin($3 / 180 * PI); }           /* Funcion seno */
         |COS '(' exp ')'    { $$ = cos($3 / 180 * PI); }           /* Funcion coseno */
         |TAN '(' exp ')'    { $$ = tan($3 / 180 * PI); }           /* Funcion tangente */
@@ -93,7 +107,7 @@ int main(int args, char **argv){
         yyin=fopen(argv[1], "rt");
     else
         yyin=fopen("operaciones.txt","rt");
-    
+   
     yyparse();
     return 0;
 }
