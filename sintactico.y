@@ -8,6 +8,8 @@
     extern char *yytext;
     extern FILE *yyin;
     void yyerror(char*);
+
+    int numero_operacion = 1;
 %}
 
 %union{
@@ -30,7 +32,17 @@ stm_lst: stm EOL
         |stm_lst stm EOL
 ;
 
-stm: exp {printf("Resultado = %.2f\n", $1);}
+stm: exp {
+            if($1 == -1){
+                printf("Expresión nro.%d, no tiene solución.\n", numero_operacion);
+                printf("----------------------------------------------------------------------------\n\n");
+                numero_operacion++;
+            }else{
+                printf("Expresión nro.%d\n", numero_operacion);
+                printf("Resultado = %.2f\n\n", $1);
+                numero_operacion++;
+            }
+         }
 ;
 
 exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
@@ -64,13 +76,13 @@ exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
                                 }
                             }       /* Potencia */
         |SQRT '(' exp ')'   { 
-                              if($3 < 0){
-                                  $$ = -1;
-                                  yyerrok;
-                                  yyerror("Raiz de número negativo");
-                              }else{
-                                  $$ = sqrt($3);
-                              } 
+                                if($3 < 0){
+                                    $$ = -1;
+                                    yyerrok;
+                                    yyerror("Raiz de número negativo");
+                                }else{
+                                    $$ = sqrt($3);
+                                } 
                             }                                      /* Raiz cuadrada */
         |SEN '(' exp ')'    { $$ = sin($3 / 180 * PI); }           /* Funcion seno */
         |COS '(' exp ')'    { $$ = cos($3 / 180 * PI); }           /* Funcion coseno */
@@ -78,12 +90,28 @@ exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
         |COSEC '(' exp ')'  { $$ = 1/sin($3 / 180 * PI); }         /* Funcion cosecante */
         |SEC '(' exp ')'    { $$ = 1/cos($3 / 180 * PI); }         /* Funcion secante */
         |COTAN '(' exp ')'  { $$ = 1/tan($3 / 180 * PI); }         /* Funcion cotangente */
-        |ASEN '(' exp ')'   { $$ = asin($3 / 180 * PI); }          /* Funcion arco_seno */
-        |ACOS '(' exp ')'   { $$ = acos($3 / 180 * PI); }          /* Funcion arco_coseno */
-        |ATAN '(' exp ')'   { $$ = atan($3 / 180 * PI); }          /* Funcion arco_tangente */
-        |LOG '(' exp ')'    { $$ = log10($3); }         /* Logaritmo base 10 */
-        |'|' exp '|'        { $$ = abs($2); }           /* Valor absoluto */
-        |'(' exp ')'        { $$ = $2; }                /* Reconocimiento agrupaciones por '()' */
+        |ASEN '(' exp ')'   { 
+                                if($3 >= -1 && $3 <= 1){
+                                    $$ = asin($3);
+                                }else{
+                                    $$ = -1;
+                                    yyerrok;
+                                    yyerror("El dominio para arcsen(x) es -1 <= x <= 1");
+                                }
+                            }                                       /* Funcion arco_seno */
+        |ACOS '(' exp ')'   { 
+                                if($3 >= -1 && $3 <= 1){
+                                    $$ = acos($3);
+                                }else{
+                                    $$ = -1;
+                                    yyerrok;
+                                    yyerror("El dominio para arccos(x) es -1 <= x <= 1");
+                                }
+                            }                                       /* Funcion arco_coseno */
+        |ATAN '(' exp ')'   { $$ = atan($3); }                      /* Funcion arco_tangente */
+        |LOG '(' exp ')'    { $$ = log10($3); }                     /* Logaritmo base 10 */
+        |'|' exp '|'        { $$ = abs($2); }                       /* Valor absoluto */
+        |'(' exp ')'        { $$ = $2; }                            /* Reconocimiento agrupaciones por '()' */
         |exp '+'            { $$ = $1; yyerrok; }           
         |exp '-'            { $$ = $1; yyerrok; }           
         |exp '*'            { $$ = $1; yyerrok; }           
@@ -95,13 +123,13 @@ exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
 %%
 
 void yyerror(char *s){
-    printf("ERROR: %s \n", s);
     printf("----------------------------------------------------------------------------\n");
+    printf("ERROR: %s \n", s);
 }
 
 int main(int args, char **argv){
     yydebug = 0;
-    printf("---------------------------- CALCULADORA -----------------------------------\n");
+    printf("\n---------------------------- CALCULADORA -----------------------------------\n");
 
     if(args>1)
         yyin=fopen(argv[1], "rt");

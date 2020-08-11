@@ -78,7 +78,9 @@
     extern FILE *yyin;
     void yyerror(char*);
 
-#line 82 "sintactico.tab.c"
+    int numero_operacion = 1;
+
+#line 84 "sintactico.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -146,11 +148,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "sintactico.y"
+#line 15 "sintactico.y"
 
     double valor;
 
-#line 154 "sintactico.tab.c"
+#line 156 "sintactico.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -527,10 +529,10 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    29,    29,    30,    33,    36,    37,    38,    39,    40,
-      41,    50,    59,    66,    75,    76,    77,    78,    79,    80,
-      81,    82,    83,    84,    85,    86,    87,    88,    89,    90,
-      91,    92
+       0,    31,    31,    32,    35,    48,    49,    50,    51,    52,
+      53,    62,    71,    78,    87,    88,    89,    90,    91,    92,
+      93,   102,   111,   112,   113,   114,   115,   116,   117,   118,
+     119,   120
 };
 #endif
 
@@ -1384,43 +1386,53 @@ yyreduce:
   switch (yyn)
     {
   case 4:
-#line 33 "sintactico.y"
-         {printf("Resultado = %.2f\n", (yyvsp[0].valor));}
-#line 1390 "sintactico.tab.c"
-    break;
-
-  case 5:
-#line 36 "sintactico.y"
-                            { (yyval.valor) = (yyvsp[0].valor); }
-#line 1396 "sintactico.tab.c"
-    break;
-
-  case 6:
-#line 37 "sintactico.y"
-                            { (yyval.valor) = -1 * (yyvsp[0].valor); }
+#line 35 "sintactico.y"
+         {
+            if((yyvsp[0].valor) == -1){
+                printf("Expresión nro.%d, no tiene solución.\n", numero_operacion);
+                printf("----------------------------------------------------------------------------\n\n");
+                numero_operacion++;
+            }else{
+                printf("Expresión nro.%d\n", numero_operacion);
+                printf("Resultado = %.2f\n\n", (yyvsp[0].valor));
+                numero_operacion++;
+            }
+         }
 #line 1402 "sintactico.tab.c"
     break;
 
-  case 7:
-#line 38 "sintactico.y"
-                            { (yyval.valor) = (yyvsp[-2].valor) + (yyvsp[0].valor); }
+  case 5:
+#line 48 "sintactico.y"
+                            { (yyval.valor) = (yyvsp[0].valor); }
 #line 1408 "sintactico.tab.c"
     break;
 
-  case 8:
-#line 39 "sintactico.y"
-                            { (yyval.valor) = (yyvsp[-2].valor) - (yyvsp[0].valor); }
+  case 6:
+#line 49 "sintactico.y"
+                            { (yyval.valor) = -1 * (yyvsp[0].valor); }
 #line 1414 "sintactico.tab.c"
     break;
 
-  case 9:
-#line 40 "sintactico.y"
-                            { (yyval.valor) = (yyvsp[-2].valor) * (yyvsp[0].valor); }
+  case 7:
+#line 50 "sintactico.y"
+                            { (yyval.valor) = (yyvsp[-2].valor) + (yyvsp[0].valor); }
 #line 1420 "sintactico.tab.c"
     break;
 
+  case 8:
+#line 51 "sintactico.y"
+                            { (yyval.valor) = (yyvsp[-2].valor) - (yyvsp[0].valor); }
+#line 1426 "sintactico.tab.c"
+    break;
+
+  case 9:
+#line 52 "sintactico.y"
+                            { (yyval.valor) = (yyvsp[-2].valor) * (yyvsp[0].valor); }
+#line 1432 "sintactico.tab.c"
+    break;
+
   case 10:
-#line 41 "sintactico.y"
+#line 53 "sintactico.y"
                             {   
                                 if((yyvsp[0].valor) != 0){            /* Verificacion errores division por 0 */
                                     (yyval.valor) = (yyvsp[-2].valor) / (yyvsp[0].valor);
@@ -1430,11 +1442,11 @@ yyreduce:
                                     yyerror("No existe división entre cero");
                                 }
                             }
-#line 1434 "sintactico.tab.c"
+#line 1446 "sintactico.tab.c"
     break;
 
   case 11:
-#line 50 "sintactico.y"
+#line 62 "sintactico.y"
                             { 
                                 if((yyvsp[0].valor) <= 0){
                                     (yyval.valor) = -1;
@@ -1444,11 +1456,11 @@ yyreduce:
                                     (yyval.valor) = fmod((yyvsp[-2].valor), (yyvsp[0].valor));
                                 } 
                             }
-#line 1448 "sintactico.tab.c"
+#line 1460 "sintactico.tab.c"
     break;
 
   case 12:
-#line 59 "sintactico.y"
+#line 71 "sintactico.y"
                             { 
                                 if((yyvsp[0].valor) == 0){
                                     (yyval.valor) = 1;
@@ -1456,133 +1468,149 @@ yyreduce:
                                     (yyval.valor) = pow((yyvsp[-2].valor), (yyvsp[0].valor));
                                 }
                             }
-#line 1460 "sintactico.tab.c"
+#line 1472 "sintactico.tab.c"
     break;
 
   case 13:
-#line 66 "sintactico.y"
+#line 78 "sintactico.y"
                             { 
-                              if((yyvsp[-1].valor) < 0){
-                                  (yyval.valor) = -1;
-                                  yyerrok;
-                                  yyerror("Raiz de número negativo");
-                              }else{
-                                  (yyval.valor) = sqrt((yyvsp[-1].valor));
-                              } 
+                                if((yyvsp[-1].valor) < 0){
+                                    (yyval.valor) = -1;
+                                    yyerrok;
+                                    yyerror("Raiz de número negativo");
+                                }else{
+                                    (yyval.valor) = sqrt((yyvsp[-1].valor));
+                                } 
                             }
-#line 1474 "sintactico.tab.c"
-    break;
-
-  case 14:
-#line 75 "sintactico.y"
-                            { (yyval.valor) = sin((yyvsp[-1].valor) / 180 * PI); }
-#line 1480 "sintactico.tab.c"
-    break;
-
-  case 15:
-#line 76 "sintactico.y"
-                            { (yyval.valor) = cos((yyvsp[-1].valor) / 180 * PI); }
 #line 1486 "sintactico.tab.c"
     break;
 
-  case 16:
-#line 77 "sintactico.y"
-                            { (yyval.valor) = tan((yyvsp[-1].valor) / 180 * PI); }
+  case 14:
+#line 87 "sintactico.y"
+                            { (yyval.valor) = sin((yyvsp[-1].valor) / 180 * PI); }
 #line 1492 "sintactico.tab.c"
     break;
 
-  case 17:
-#line 78 "sintactico.y"
-                            { (yyval.valor) = 1/sin((yyvsp[-1].valor) / 180 * PI); }
+  case 15:
+#line 88 "sintactico.y"
+                            { (yyval.valor) = cos((yyvsp[-1].valor) / 180 * PI); }
 #line 1498 "sintactico.tab.c"
     break;
 
-  case 18:
-#line 79 "sintactico.y"
-                            { (yyval.valor) = 1/cos((yyvsp[-1].valor) / 180 * PI); }
+  case 16:
+#line 89 "sintactico.y"
+                            { (yyval.valor) = tan((yyvsp[-1].valor) / 180 * PI); }
 #line 1504 "sintactico.tab.c"
     break;
 
-  case 19:
-#line 80 "sintactico.y"
-                            { (yyval.valor) = 1/tan((yyvsp[-1].valor) / 180 * PI); }
+  case 17:
+#line 90 "sintactico.y"
+                            { (yyval.valor) = 1/sin((yyvsp[-1].valor) / 180 * PI); }
 #line 1510 "sintactico.tab.c"
     break;
 
-  case 20:
-#line 81 "sintactico.y"
-                            { (yyval.valor) = asin((yyvsp[-1].valor) / 180 * PI); }
+  case 18:
+#line 91 "sintactico.y"
+                            { (yyval.valor) = 1/cos((yyvsp[-1].valor) / 180 * PI); }
 #line 1516 "sintactico.tab.c"
     break;
 
-  case 21:
-#line 82 "sintactico.y"
-                            { (yyval.valor) = acos((yyvsp[-1].valor) / 180 * PI); }
+  case 19:
+#line 92 "sintactico.y"
+                            { (yyval.valor) = 1/tan((yyvsp[-1].valor) / 180 * PI); }
 #line 1522 "sintactico.tab.c"
     break;
 
+  case 20:
+#line 93 "sintactico.y"
+                            { 
+                                if((yyvsp[-1].valor) >= -1 && (yyvsp[-1].valor) <= 1){
+                                    (yyval.valor) = asin((yyvsp[-1].valor));
+                                }else{
+                                    (yyval.valor) = -1;
+                                    yyerrok;
+                                    yyerror("El dominio para arcsen(x) es -1 <= x <= 1");
+                                }
+                            }
+#line 1536 "sintactico.tab.c"
+    break;
+
+  case 21:
+#line 102 "sintactico.y"
+                            { 
+                                if((yyvsp[-1].valor) >= -1 && (yyvsp[-1].valor) <= 1){
+                                    (yyval.valor) = acos((yyvsp[-1].valor));
+                                }else{
+                                    (yyval.valor) = -1;
+                                    yyerrok;
+                                    yyerror("El dominio para arccos(x) es -1 <= x <= 1");
+                                }
+                            }
+#line 1550 "sintactico.tab.c"
+    break;
+
   case 22:
-#line 83 "sintactico.y"
-                            { (yyval.valor) = atan((yyvsp[-1].valor) / 180 * PI); }
-#line 1528 "sintactico.tab.c"
+#line 111 "sintactico.y"
+                            { (yyval.valor) = atan((yyvsp[-1].valor)); }
+#line 1556 "sintactico.tab.c"
     break;
 
   case 23:
-#line 84 "sintactico.y"
+#line 112 "sintactico.y"
                             { (yyval.valor) = log10((yyvsp[-1].valor)); }
-#line 1534 "sintactico.tab.c"
+#line 1562 "sintactico.tab.c"
     break;
 
   case 24:
-#line 85 "sintactico.y"
+#line 113 "sintactico.y"
                             { (yyval.valor) = abs((yyvsp[-1].valor)); }
-#line 1540 "sintactico.tab.c"
+#line 1568 "sintactico.tab.c"
     break;
 
   case 25:
-#line 86 "sintactico.y"
+#line 114 "sintactico.y"
                             { (yyval.valor) = (yyvsp[-1].valor); }
-#line 1546 "sintactico.tab.c"
+#line 1574 "sintactico.tab.c"
     break;
 
   case 26:
-#line 87 "sintactico.y"
+#line 115 "sintactico.y"
                             { (yyval.valor) = (yyvsp[-1].valor); yyerrok; }
-#line 1552 "sintactico.tab.c"
+#line 1580 "sintactico.tab.c"
     break;
 
   case 27:
-#line 88 "sintactico.y"
+#line 116 "sintactico.y"
                             { (yyval.valor) = (yyvsp[-1].valor); yyerrok; }
-#line 1558 "sintactico.tab.c"
+#line 1586 "sintactico.tab.c"
     break;
 
   case 28:
-#line 89 "sintactico.y"
+#line 117 "sintactico.y"
                             { (yyval.valor) = (yyvsp[-1].valor); yyerrok; }
-#line 1564 "sintactico.tab.c"
+#line 1592 "sintactico.tab.c"
     break;
 
   case 29:
-#line 90 "sintactico.y"
+#line 118 "sintactico.y"
                             { (yyval.valor) = (yyvsp[-1].valor); yyerrok; }
-#line 1570 "sintactico.tab.c"
+#line 1598 "sintactico.tab.c"
     break;
 
   case 30:
-#line 91 "sintactico.y"
+#line 119 "sintactico.y"
                             { (yyval.valor) = (yyvsp[-1].valor); yyerrok; }
-#line 1576 "sintactico.tab.c"
+#line 1604 "sintactico.tab.c"
     break;
 
   case 31:
-#line 92 "sintactico.y"
+#line 120 "sintactico.y"
                             { (yyval.valor) = (yyvsp[-1].valor); yyerrok; }
-#line 1582 "sintactico.tab.c"
+#line 1610 "sintactico.tab.c"
     break;
 
 
-#line 1586 "sintactico.tab.c"
+#line 1614 "sintactico.tab.c"
 
       default: break;
     }
@@ -1814,17 +1842,17 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 95 "sintactico.y"
+#line 123 "sintactico.y"
 
 
 void yyerror(char *s){
-    printf("ERROR: %s \n", s);
     printf("----------------------------------------------------------------------------\n");
+    printf("ERROR: %s \n", s);
 }
 
 int main(int args, char **argv){
     yydebug = 0;
-    printf("---------------------------- CALCULADORA -----------------------------------\n");
+    printf("\n---------------------------- CALCULADORA -----------------------------------\n");
 
     if(args>1)
         yyin=fopen(argv[1], "rt");
