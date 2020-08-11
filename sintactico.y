@@ -75,41 +75,41 @@ exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
                                     $$ = pow($1, $3);
                                 }
                             }       /* Potencia */
-        |SQRT '(' exp ')'   { 
-                                if($3 < 0){
+        |SQRT  exp          { 
+                                if($2 < 0){
                                     $$ = -1;
                                     yyerrok;
                                     yyerror("Raiz de número negativo");
                                 }else{
-                                    $$ = sqrt($3);
+                                    $$ = sqrt($2);
                                 } 
                             }                                      /* Raiz cuadrada */
-        |SEN '(' exp ')'    { $$ = sin($3 / 180 * PI); }           /* Funcion seno */
-        |COS '(' exp ')'    { $$ = cos($3 / 180 * PI); }           /* Funcion coseno */
-        |TAN '(' exp ')'    { $$ = tan($3 / 180 * PI); }           /* Funcion tangente */
-        |COSEC '(' exp ')'  { $$ = 1/sin($3 / 180 * PI); }         /* Funcion cosecante */
-        |SEC '(' exp ')'    { $$ = 1/cos($3 / 180 * PI); }         /* Funcion secante */
-        |COTAN '(' exp ')'  { $$ = 1/tan($3 / 180 * PI); }         /* Funcion cotangente */
-        |ASEN '(' exp ')'   { 
-                                if($3 >= -1 && $3 <= 1){
-                                    $$ = asin($3);
+        |SEN  exp           { $$ = sin($2 / 180 * PI); }           /* Funcion seno */
+        |COS  exp           { $$ = cos($2 / 180 * PI); }           /* Funcion coseno */
+        |TAN  exp           { $$ = tan($2 / 180 * PI); }           /* Funcion tangente */
+        |COSEC  exp         { $$ = 1/sin($2 / 180 * PI); }         /* Funcion cosecante */
+        |SEC  exp           { $$ = 1/cos($2 / 180 * PI); }         /* Funcion secante */
+        |COTAN  exp         { $$ = 1/tan($2 / 180 * PI); }         /* Funcion cotangente */
+        |ASEN  exp          { 
+                                if($2 >= -1 && $2 <= 1){
+                                    $$ = asin($2);
                                 }else{
                                     $$ = -1;
                                     yyerrok;
                                     yyerror("El dominio para arcsen(x) es -1 <= x <= 1");
                                 }
                             }                                       /* Funcion arco_seno */
-        |ACOS '(' exp ')'   { 
-                                if($3 >= -1 && $3 <= 1){
-                                    $$ = acos($3);
+        |ACOS  exp          { 
+                                if($2 >= -1 && $2 <= 1){
+                                    $$ = acos($2);
                                 }else{
                                     $$ = -1;
                                     yyerrok;
                                     yyerror("El dominio para arccos(x) es -1 <= x <= 1");
                                 }
                             }                                       /* Funcion arco_coseno */
-        |ATAN '(' exp ')'   { $$ = atan($3); }                      /* Funcion arco_tangente */
-        |LOG '(' exp ')'    { $$ = log10($3); }                     /* Logaritmo base 10 */
+        |ATAN  exp          { $$ = atan($2); }                      /* Funcion arco_tangente */
+        |LOG  exp           { $$ = log10($2); }                     /* Logaritmo base 10 */
         |'|' exp '|'        { $$ = abs($2); }                       /* Valor absoluto */
         |'(' exp ')'        { $$ = $2; }                            /* Reconocimiento agrupaciones por '()' */
         |exp '+'            { $$ = $1; yyerrok; }           
