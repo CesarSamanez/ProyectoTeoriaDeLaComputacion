@@ -49,20 +49,22 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NUM = 258,
-    EOL = 259,
-    SEN = 260,
-    COS = 261,
-    TAN = 262,
-    COTAN = 263,
-    SEC = 264,
-    COSEC = 265,
-    ASEN = 266,
-    ACOS = 267,
-    ATAN = 268,
-    LOG = 269,
-    MOD = 270,
-    SQRT = 271
+    INT = 258,
+    FLOAT = 259,
+    ID = 260,
+    NUM = 261,
+    SEN = 262,
+    COS = 263,
+    TAN = 264,
+    COTAN = 265,
+    SEC = 266,
+    COSEC = 267,
+    ASEN = 268,
+    ACOS = 269,
+    ATAN = 270,
+    LOG = 271,
+    MOD = 272,
+    SQRT = 273
   };
 #endif
 
@@ -72,9 +74,11 @@ union YYSTYPE
 {
 #line 15 "sintactico.y"
 
-    double valor;
+    char* tipo_dato;
+    char* nombre;
+    float valor;
 
-#line 78 "sintactico.tab.h"
+#line 82 "sintactico.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
