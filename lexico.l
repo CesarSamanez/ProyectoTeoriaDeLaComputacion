@@ -2,7 +2,7 @@
     #include "sintactico.tab.h"
 %}
 
-numero              [0-9]+("."[0-9]+)?
+numero              [-]?[0-9]+([.]{1}[0-9]+)?
 
 %%
 

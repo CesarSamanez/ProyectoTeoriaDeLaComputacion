@@ -51,17 +51,18 @@ extern int yydebug;
   {
     NUM = 258,
     EOL = 259,
-    SQRT = 260,
-    SEN = 261,
-    COS = 262,
-    TAN = 263,
-    COTAN = 264,
-    SEC = 265,
-    COSEC = 266,
-    ASEN = 267,
-    ACOS = 268,
-    ATAN = 269,
-    LOG = 270
+    SEN = 260,
+    COS = 261,
+    TAN = 262,
+    COTAN = 263,
+    SEC = 264,
+    COSEC = 265,
+    ASEN = 266,
+    ACOS = 267,
+    ATAN = 268,
+    LOG = 269,
+    MOD = 270,
+    SQRT = 271
   };
 #endif
 
@@ -73,7 +74,7 @@ union YYSTYPE
 
     double valor;
 
-#line 77 "sintactico.tab.h"
+#line 78 "sintactico.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

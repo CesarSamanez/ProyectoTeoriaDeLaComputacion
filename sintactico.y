@@ -17,12 +17,12 @@
 }
 
 %token <valor> NUM
-%token EOL SQRT
-%token SEN COS TAN COTAN SEC COSEC ASEN ACOS ATAN LOG
+%token EOL 
 
 %left '-' '+'
 %left '*' '/' 
-%right '^'
+%right '^' 
+%left SEN COS TAN COTAN SEC COSEC ASEN ACOS ATAN LOG MOD SQRT
 
 %type <valor> exp
 
@@ -30,6 +30,7 @@
 
 stm_lst: stm EOL
         |stm_lst stm EOL
+        |stm_lst error EOL  {yyerrok;}
 ;
 
 stm: exp {
@@ -46,7 +47,6 @@ stm: exp {
 ;
 
 exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
-        |'-' NUM            { $$ = -1 * $2; }           /* Numero negativo */
         |exp '+' exp        { $$ = $1 + $3; }           /* Suma */
         |exp '-' exp        { $$ = $1 - $3; }           /* Resta */
         |exp '*' exp        { $$ = $1 * $3; }           /* Multiplicación */
@@ -111,13 +111,28 @@ exp:    NUM                 { $$ = $1; }                /* Detecta un numero */
         |ATAN  exp          { $$ = atan($2); }                      /* Funcion arco_tangente */
         |LOG  exp           { $$ = log10($2); }                     /* Logaritmo base 10 */
         |'|' exp '|'        { $$ = abs($2); }                       /* Valor absoluto */
-        |'(' exp ')'        { $$ = $2; }                            /* Reconocimiento agrupaciones por '()' */
-        |exp '+'            { $$ = $1; yyerrok; }           
-        |exp '-'            { $$ = $1; yyerrok; }           
-        |exp '*'            { $$ = $1; yyerrok; }           
-        |exp '/'            { $$ = $1; yyerrok; }                           
-        |exp '%'            { $$ = $1; yyerrok; }      
-        |exp '^'            { $$ = $1; yyerrok; }       
+        |'(' exp ')'        { $$ = $2; }                            /* Reconocimiento agrupaciones por '()' */               
+        |'(' error ')'      { yyerrok; }
+        |exp operaciones    { $$ = $1; yyerrok; }        
+;
+
+operaciones: '+'
+            |'-'
+            |'*'
+            |'/'
+            |'%'
+            |SQRT
+            |SEN
+            |COS
+            |TAN
+            |COSEC
+            |SEC
+            |COTAN
+            |ASEN
+            |ACOS
+            |ATAN
+            |LOG
+            |'|'
 ;
 
 %%
