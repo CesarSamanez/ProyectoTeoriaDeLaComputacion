@@ -31,9 +31,9 @@
 
 %%
 
-
 declaration_list: declaration ';'
                  |declaration_list declaration ';'
+                 |declaration_list error ';'              {yyerrok;}
 ;
 
 declaration: type_declaration id_list
@@ -174,3 +174,4 @@ int main(int args, char **argv){
     yyparse();
     return 0;
 }
+

@@ -6,6 +6,7 @@ nombre_variable     [a-zA-Z]+([0-9]*|[a-zA-Z]*)*
 valor_variable      [-]?[0-9]+([.]{1}[0-9]+)?
 
 %%
+
 "int"               { return(INT); }
 "float"             { return(FLOAT); }
 " "                 ;
@@ -29,3 +30,4 @@ valor_variable      [-]?[0-9]+([.]{1}[0-9]+)?
 int yywrap(){
     return 0;
 }
+
